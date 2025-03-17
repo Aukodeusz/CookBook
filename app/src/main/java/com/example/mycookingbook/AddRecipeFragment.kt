@@ -1,6 +1,5 @@
 package com.example.cookbook
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.mycookingbook.R
 
 class AddRecipeFragment : Fragment() {
 
@@ -35,20 +35,20 @@ class AddRecipeFragment : Fragment() {
             val rating = ratingBar.rating
 
             if (name.isNotEmpty() && ingredients.isNotEmpty() && instructions.isNotEmpty()) {
-                saveRecipe(Recipe(name, ingredients, instructions, rating))
-                (activity as MainActivity).replaceFragment(RecipeListFragment())
+                val newRecipe = Recipe(name, ingredients, instructions, rating)
+
+                // Przekazanie nowego przepisu do listy
+                val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (parentFragment is RecipeListFragment) {
+                    parentFragment.recipeList.add(newRecipe)
+                    parentFragment.saveRecipes() // Zapis przepisów
+                }
+
+                Toast.makeText(context, "Dodano przepis: ${newRecipe.name}", Toast.LENGTH_SHORT).show()
+                (activity as MainActivity).supportFragmentManager.popBackStack()
             } else {
                 Toast.makeText(context, "Wypełnij wszystkie pola!", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun saveRecipe(recipe: Recipe) {
-        val sharedPreferences = requireActivity().getSharedPreferences("CookbookPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val recipes = sharedPreferences.getStringSet("recipes", mutableSetOf()) ?: mutableSetOf()
-        recipes.add(recipe.toJson())
-        editor.putStringSet("recipes", recipes)
-        editor.apply()
     }
 }

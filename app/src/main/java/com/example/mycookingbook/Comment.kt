@@ -1,4 +1,5 @@
-package com.example.mycookingbook
+package com.example.cookbook
 
-class Comment {
-}
+data class Comment(
+    val text: String
+)

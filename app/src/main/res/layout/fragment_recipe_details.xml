@@ -5,11 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Szczegóły przepisu -->
     <TextView
         android:id="@+id/recipe_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24sp"
+        android:textStyle="bold"
         android:text="Nazwa przepisu" />
 
     <TextView
@@ -34,6 +36,7 @@
         android:stepSize="0.5"
         android:layout_marginTop="16dp" />
 
+    <!-- Komentarze -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
