@@ -1,7 +1,8 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.cookbook.RecipeListFragment
 import com.example.mycookingbook.R
 
 class MainActivity : AppCompatActivity() {
