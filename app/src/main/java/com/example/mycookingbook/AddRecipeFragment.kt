@@ -1,4 +1,54 @@
-package com.example.mycookingbook
+package com.example.cookbook
 
-class AddRecipeFragment {
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.RatingBar
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+
+class AddRecipeFragment : Fragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.fragment_add_recipe, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val nameInput = view.findViewById<EditText>(R.id.recipe_name_input)
+        val ingredientsInput = view.findViewById<EditText>(R.id.recipe_ingredients_input)
+        val instructionsInput = view.findViewById<EditText>(R.id.recipe_instructions_input)
+        val ratingBar = view.findViewById<RatingBar>(R.id.recipe_rating_bar)
+
+        view.findViewById<Button>(R.id.save_recipe_button).setOnClickListener {
+            val name = nameInput.text.toString()
+            val ingredients = ingredientsInput.text.toString()
+            val instructions = instructionsInput.text.toString()
+            val rating = ratingBar.rating
+
+            if (name.isNotEmpty() && ingredients.isNotEmpty() && instructions.isNotEmpty()) {
+                saveRecipe(Recipe(name, ingredients, instructions, rating))
+                (activity as MainActivity).replaceFragment(RecipeListFragment())
+            } else {
+                Toast.makeText(context, "Wypełnij wszystkie pola!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun saveRecipe(recipe: Recipe) {
+        val sharedPreferences = requireActivity().getSharedPreferences("CookbookPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val recipes = sharedPreferences.getStringSet("recipes", mutableSetOf()) ?: mutableSetOf()
+        recipes.add(recipe.toJson())
+        editor.putStringSet("recipes", recipes)
+        editor.apply()
+    }
 }
