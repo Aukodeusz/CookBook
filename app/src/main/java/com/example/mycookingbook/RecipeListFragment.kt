@@ -2,6 +2,7 @@ package com.example.mycookingbook
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,7 @@ class RecipeListFragment : Fragment() {
                 .commit()
         }
 
+        // Wczytywanie przepisów
         loadRecipes()
     }
 
@@ -51,18 +53,24 @@ class RecipeListFragment : Fragment() {
         recipeList.clear()
 
         if (recipesString.isNotEmpty()) {
-            val recipes = recipesString.split(";").filter { it.isNotEmpty() }
-            for (recipeString in recipes) {
-                val fields = recipeString.split("|")
-                if (fields.size == 4) {
-                    val name = fields[0]
-                    val ingredients = fields[1]
-                    val instructions = fields[2]
-                    val rating = fields[3].toFloatOrNull() ?: 0f
-                    recipeList.add(Recipe(name, ingredients, instructions, rating))
+            try {
+                val recipes = recipesString.split(";").filter { it.isNotEmpty() }
+                for (recipeString in recipes) {
+                    val fields = recipeString.split("|")
+                    if (fields.size == 4) {
+                        val name = fields[0]
+                        val ingredients = fields[1]
+                        val instructions = fields[2]
+                        val rating = fields[3].toFloatOrNull() ?: 0f
+                        recipeList.add(Recipe(name, ingredients, instructions, rating))
+                    }
                 }
+                Log.d("RecipeListFragment", "Załadowano przepisy: ${recipeList.size}")
+            } catch (e: Exception) {
+                Log.e("RecipeListFragment", "Błąd podczas wczytywania przepisów: ${e.message}")
             }
         } else {
+            Log.d("RecipeListFragment", "Brak zapisanych przepisów, dodano przykładowe.")
             recipeList.add(Recipe("Spaghetti Carbonara", "Makaron, jajka, boczek, parmezan", "Ugotuj makaron i wymieszaj z sosem.", 4.5f))
             recipeList.add(Recipe("Tiramisu", "Biszkopty, kawa, mascarpone", "Przygotuj warstwowy deser i schłódź.", 5.0f))
         }
@@ -78,5 +86,7 @@ class RecipeListFragment : Fragment() {
         }
         editor.putString("recipes", recipesString)
         editor.apply()
+
+        Log.d("RecipeListFragment", "Zapisano przepisy: ${recipeList.size}")
     }
 }

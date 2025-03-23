@@ -1,6 +1,7 @@
 package com.example.mycookingbook
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,12 +43,14 @@ class AddRecipeFragment : Fragment() {
                     parentFragment.recipeList.add(newRecipe)
                     parentFragment.saveRecipes()
                     parentFragment.recipeAdapter.notifyDataSetChanged()
+                    Log.d("AddRecipeFragment", "Dodano przepis: ${newRecipe.name}")
                 }
 
                 Toast.makeText(context, "Dodano przepis: ${newRecipe.name}", Toast.LENGTH_SHORT).show()
                 requireActivity().supportFragmentManager.popBackStack()
             } else {
                 Toast.makeText(context, "Wypełnij wszystkie pola!", Toast.LENGTH_SHORT).show()
+                Log.w("AddRecipeFragment", "Nie można dodać przepisu - brak danych.")
             }
         }
     }

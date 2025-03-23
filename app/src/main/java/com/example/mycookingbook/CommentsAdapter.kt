@@ -1,3 +1,4 @@
+/*
 package com.example.cookbook
 
 import android.view.LayoutInflater
@@ -26,3 +27,4 @@ class CommentsAdapter(
 
     override fun getItemCount(): Int = comments.size
 }
+*/
