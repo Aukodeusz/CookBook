@@ -1,11 +1,10 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mycookingbook.R
 
 class RecipeAdapter(
     private val recipes: List<Recipe>,

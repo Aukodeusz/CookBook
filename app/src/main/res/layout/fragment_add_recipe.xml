@@ -1,38 +1,47 @@
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/recipe_name_input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nazwa przepisu" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/recipe_ingredients_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Składniki" />
+        <EditText
+            android:id="@+id/recipe_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nazwa przepisu"
+            android:layout_marginBottom="8dp" />
 
-    <EditText
-        android:id="@+id/recipe_instructions_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Instrukcje" />
+        <EditText
+            android:id="@+id/recipe_ingredients_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Składniki"
+            android:layout_marginBottom="8dp" />
 
-    <RatingBar
-        android:id="@+id/recipe_rating_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="0.5" />
+        <EditText
+            android:id="@+id/recipe_instructions_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Instrukcje"
+            android:layout_marginBottom="8dp" />
 
-    <Button
-        android:id="@+id/save_recipe_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Zapisz Przepis" />
-</LinearLayout>
+        <RatingBar
+            android:id="@+id/recipe_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/save_recipe_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zapisz Przepis" />
+    </LinearLayout>
+</ScrollView>

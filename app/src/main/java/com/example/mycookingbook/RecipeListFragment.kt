@@ -1,4 +1,4 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import android.content.Context
 import android.os.Bundle
@@ -9,13 +9,11 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mycookingbook.MainActivity
-import com.example.mycookingbook.R
 
 class RecipeListFragment : Fragment() {
 
     val recipeList = mutableListOf<Recipe>()
-    private lateinit var recipeAdapter: RecipeAdapter
+    lateinit var recipeAdapter: RecipeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,7 +25,6 @@ class RecipeListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Inicjalizacja RecyclerView
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recipeAdapter = RecipeAdapter(recipeList) { recipe ->
             (activity as MainActivity).supportFragmentManager.beginTransaction()
@@ -38,19 +35,17 @@ class RecipeListFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = recipeAdapter
 
-        // Odczyt przepisów z pamięci lokalnej
-        loadRecipes()
-
-        // Obsługa przycisku "Dodaj Przepis"
         view.findViewById<Button>(R.id.add_recipe_button).setOnClickListener {
             (activity as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AddRecipeFragment())
                 .addToBackStack(null)
                 .commit()
         }
+
+        loadRecipes()
     }
 
-    private fun loadRecipes() {
+    fun loadRecipes() {
         val sharedPreferences = requireActivity().getSharedPreferences("CookbookPrefs", Context.MODE_PRIVATE)
         val recipesString = sharedPreferences.getString("recipes", "") ?: ""
         recipeList.clear()
@@ -67,6 +62,9 @@ class RecipeListFragment : Fragment() {
                     recipeList.add(Recipe(name, ingredients, instructions, rating))
                 }
             }
+        } else {
+            recipeList.add(Recipe("Spaghetti Carbonara", "Makaron, jajka, boczek, parmezan", "Ugotuj makaron i wymieszaj z sosem.", 4.5f))
+            recipeList.add(Recipe("Tiramisu", "Biszkopty, kawa, mascarpone", "Przygotuj warstwowy deser i schłódź.", 5.0f))
         }
 
         recipeAdapter.notifyDataSetChanged()
@@ -80,10 +78,5 @@ class RecipeListFragment : Fragment() {
         }
         editor.putString("recipes", recipesString)
         editor.apply()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        saveRecipes() // Zapis przepisów przy zamknięciu widoku
     }
 }

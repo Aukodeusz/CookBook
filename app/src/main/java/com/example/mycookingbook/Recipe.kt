@@ -1,4 +1,4 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import java.io.Serializable
 

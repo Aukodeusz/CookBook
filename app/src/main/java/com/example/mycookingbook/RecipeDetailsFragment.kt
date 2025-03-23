@@ -1,4 +1,4 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import android.content.Context
 import android.os.Bundle
@@ -7,18 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.mycookingbook.R
+import android.widget.LinearLayout
 
 class RecipeDetailsFragment : Fragment() {
 
-    private lateinit var recipe: Recipe
-    private val comments = mutableListOf<Comment>()
-    private lateinit var commentsAdapter: CommentsAdapter
+    companion object {
+        private const val ARG_RECIPE = "recipe"
+
+        fun newInstance(recipe: Recipe): RecipeDetailsFragment {
+            val fragment = RecipeDetailsFragment()
+            val args = Bundle()
+            args.putSerializable(ARG_RECIPE, recipe)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private val commentsList = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,67 +38,62 @@ class RecipeDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recipe = arguments?.getSerializable("recipe") as Recipe
+        val recipe = arguments?.getSerializable(ARG_RECIPE) as? Recipe
+        recipe?.let {
+            view.findViewById<TextView>(R.id.recipe_name).text = it.name
+            view.findViewById<TextView>(R.id.recipe_ingredients).text = it.ingredients
+            view.findViewById<TextView>(R.id.recipe_instructions).text = it.instructions
+            view.findViewById<TextView>(R.id.recipe_rating).text = "Ocena: ${it.rating}"
 
-        // Wyświetlanie szczegółów przepisu
-        view.findViewById<TextView>(R.id.recipe_name).text = recipe.name
-        view.findViewById<TextView>(R.id.recipe_ingredients).text = recipe.ingredients
-        view.findViewById<TextView>(R.id.recipe_instructions).text = recipe.instructions
-        val ratingBar = view.findViewById<RatingBar>(R.id.recipe_rating_bar)
-        ratingBar.rating = recipe.rating
+            loadComments(it.name, view.findViewById(R.id.comments_container))
+        }
 
-        // Ustawienia RecyclerView dla komentarzy
-        val recyclerView = view.findViewById<RecyclerView>(R.id.comments_recycler_view)
-        commentsAdapter = CommentsAdapter(comments)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = commentsAdapter
-
-        // Obsługa dodawania komentarzy
+        val commentsContainer = view.findViewById<LinearLayout>(R.id.comments_container)
         val commentInput = view.findViewById<EditText>(R.id.comment_input)
         view.findViewById<Button>(R.id.add_comment_button).setOnClickListener {
-            val commentText = commentInput.text.toString()
-            if (commentText.isNotEmpty()) {
-                comments.add(Comment(commentText))
-                commentsAdapter.notifyDataSetChanged()
+            val comment = commentInput.text.toString()
+            if (comment.isNotEmpty() && recipe != null) {
+                commentsList.add(comment)
+                addCommentToView(commentsContainer, comment)
+                saveComments(recipe.name)
                 commentInput.text.clear()
-                saveComments()
+                Toast.makeText(context, "Dodano komentarz!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Komentarz nie może być pusty!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Ładowanie zapisanych komentarzy
-        loadComments()
-    }
-
-    private fun loadComments() {
-        val sharedPreferences = requireActivity().getSharedPreferences("CookbookPrefs", Context.MODE_PRIVATE)
-        val commentsString = sharedPreferences.getString(recipe.name + "_comments", "") ?: ""
-        comments.clear()
-
-        if (commentsString.isNotEmpty()) {
-            val commentTexts = commentsString.split(";").filter { it.isNotEmpty() }
-            for (text in commentTexts) {
-                comments.add(Comment(text))
-            }
+        view.findViewById<Button>(R.id.back_button).setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
         }
-
-        commentsAdapter.notifyDataSetChanged()
     }
 
-    private fun saveComments() {
-        val sharedPreferences = requireActivity().getSharedPreferences("CookbookPrefs", Context.MODE_PRIVATE)
+    private fun addCommentToView(container: LinearLayout, comment: String) {
+        val textView = TextView(requireContext()).apply {
+            text = comment
+            textSize = 16f
+            setPadding(8, 8, 8, 8)
+        }
+        container.addView(textView)
+    }
+
+    private fun saveComments(recipeName: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("RecipeComments", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val commentsString = comments.joinToString(";") { it.text }
-        editor.putString(recipe.name + "_comments", commentsString)
+        val commentsString = commentsList.joinToString(";")
+        editor.putString(recipeName, commentsString)
         editor.apply()
     }
 
-    companion object {
-        fun newInstance(recipe: Recipe): RecipeDetailsFragment {
-            val fragment = RecipeDetailsFragment()
-            val args = Bundle()
-            args.putSerializable("recipe", recipe)
-            fragment.arguments = args
-            return fragment
+    private fun loadComments(recipeName: String, container: LinearLayout) {
+        val sharedPreferences = requireActivity().getSharedPreferences("RecipeComments", Context.MODE_PRIVATE)
+        val commentsString = sharedPreferences.getString(recipeName, "") ?: ""
+        commentsList.clear()
+        if (commentsString.isNotEmpty()) {
+            commentsList.addAll(commentsString.split(";").filter { it.isNotEmpty() })
+            commentsList.forEach { comment ->
+                addCommentToView(container, comment)
+            }
         }
     }
 }

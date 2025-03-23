@@ -1,4 +1,4 @@
-package com.example.cookbook
+package com.example.mycookingbook
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +9,6 @@ import android.widget.EditText
 import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.mycookingbook.MainActivity
-import com.example.mycookingbook.R
 
 class AddRecipeFragment : Fragment() {
 
@@ -38,15 +36,16 @@ class AddRecipeFragment : Fragment() {
             if (name.isNotEmpty() && ingredients.isNotEmpty() && instructions.isNotEmpty()) {
                 val newRecipe = Recipe(name, ingredients, instructions, rating)
 
-                // Przekazanie nowego przepisu do listy
-                val parentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
+                val parentFragment =
+                    requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container)
                 if (parentFragment is RecipeListFragment) {
                     parentFragment.recipeList.add(newRecipe)
-                    parentFragment.saveRecipes() // Zapis przepisów
+                    parentFragment.saveRecipes()
+                    parentFragment.recipeAdapter.notifyDataSetChanged()
                 }
 
                 Toast.makeText(context, "Dodano przepis: ${newRecipe.name}", Toast.LENGTH_SHORT).show()
-                (activity as MainActivity).supportFragmentManager.popBackStack()
+                requireActivity().supportFragmentManager.popBackStack()
             } else {
                 Toast.makeText(context, "Wypełnij wszystkie pola!", Toast.LENGTH_SHORT).show()
             }

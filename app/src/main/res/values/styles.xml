@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:padding">16dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">@android:drawable/editbox_background_normal</item>
+    </style>
+
+</resources>
